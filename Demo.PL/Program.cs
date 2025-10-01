@@ -16,6 +16,11 @@ namespace Demo.PL
             builder.Services.AddScoped<IDepartmentServices, DepartmentServices>();
             builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
 
+            builder.Services.AddDbContext<CompanyDbContext>(options =>
+            {
+                var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+                options.UseSqlServer(connectionString);
+            });
 
 
             var app = builder.Build();
