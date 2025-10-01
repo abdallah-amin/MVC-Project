@@ -1,3 +1,8 @@
+using Demo.BLL.Services;
+using Demo.DAL.Context;
+using Demo.DAL.Repository;
+using Microsoft.EntityFrameworkCore;
+
 namespace Demo.PL
 {
     public class Program
@@ -8,6 +13,10 @@ namespace Demo.PL
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            builder.Services.AddScoped<IDepartmentServices, DepartmentServices>();
+            builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+
+
 
             var app = builder.Build();
 
