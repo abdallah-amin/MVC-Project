@@ -3,16 +3,13 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Demo.PL.Controllers
 {
-    public class DepartmentsController : Controller
+    public class DepartmentsController(IDepartmentServices departmentServices) : Controller
     {
-        private IDepartmentServices _DepartmentServices;
-        public DepartmentsController(IDepartmentServices DepartmentServices)
-        {
-            _DepartmentServices = DepartmentServices;
-        }
+        [HttpGet]
         public IActionResult Index()
         {
-            return View();
+            var department = departmentServices.GetAll();
+            return View(department);
         }
     }
 }
