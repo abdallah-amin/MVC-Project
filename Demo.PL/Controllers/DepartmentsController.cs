@@ -91,6 +91,41 @@ namespace Demo.PL.Controllers
             return View(request);
 
         }
+        [HttpGet]
+        public IActionResult Delete(int? id)
+        {
+            if (!id.HasValue)
+                return BadRequest();
+            var department = departmentServices.GetById(id.Value);
+            if (department == null)
+                return NotFound();
+            return View(department);
+
+        }
+        [HttpPost, ActionName("Delete")]
+        public IActionResult ConfirmDelete(int? id)
+        {
+            if (!id.HasValue)
+                return BadRequest();
+            DepartmentDetailsResponse? department = null;
+            try
+            {
+                department = departmentServices.GetById(id.Value);
+                var isDeleted = departmentServices.Delete(id.Value);
+                if (isDeleted)
+                    return RedirectToAction(nameof(Index));
+                else
+                    ModelState.AddModelError(string.Empty, "Sorry you can't update Department Now");
+            }
+            catch (Exception ex)
+            {
+                if (env.IsDevelopment())
+                    ModelState.AddModelError(string.Empty, ex.Message);
+                else
+                    logger.LogError(ex, ex.Message);
+            }
+            return View(department);
+        }
 
     }
 }
