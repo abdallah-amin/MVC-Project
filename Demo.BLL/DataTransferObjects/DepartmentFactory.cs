@@ -1,5 +1,5 @@
 ﻿namespace Demo.BLL.DataTransferObjects;
-internal static class DepartmentFactory
+public static class DepartmentFactory
 {
     public static DepartmentResponse ToResponse(this Department department)
     {
