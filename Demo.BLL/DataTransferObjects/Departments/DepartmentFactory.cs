@@ -1,4 +1,4 @@
-﻿namespace Demo.BLL.DataTransferObjects;
+﻿namespace Demo.BLL.DataTransferObjects.Departments;
 public static class DepartmentFactory
 {
     public static DepartmentResponse ToResponse(this Department department)

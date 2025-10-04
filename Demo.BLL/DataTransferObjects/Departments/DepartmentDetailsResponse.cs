@@ -1,4 +1,4 @@
-﻿namespace Demo.BLL.DataTransferObjects;
+﻿namespace Demo.BLL.DataTransferObjects.Departments;
 public class DepartmentDetailsResponse
 {
     public int Id { get; set; } 

@@ -1,4 +1,6 @@
-﻿namespace Demo.BLL.Services;
+﻿
+
+namespace Demo.BLL.Services;
 public class DepartmentServices(IDepartmentRepository departmentRepository) : IDepartmentServices
 {
     public int Add(DepartmentRequest request)

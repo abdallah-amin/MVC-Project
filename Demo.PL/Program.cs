@@ -22,6 +22,8 @@ namespace Demo.PL
                 options.UseSqlServer(connectionString);
             });
 
+            builder.Services.AddAutoMapper(typeof(BLL.AssemplyReference).Assembly);
+
 
             var app = builder.Build();
 
