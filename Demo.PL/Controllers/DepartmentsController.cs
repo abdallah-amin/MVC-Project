@@ -1,4 +1,5 @@
-﻿using Demo.BLL.DataTransferObjects.Departments;
+﻿using AutoMapper;
+using Demo.BLL.DataTransferObjects.Departments;
 using Demo.BLL.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,7 +7,7 @@ namespace Demo.PL.Controllers
 {
     public class DepartmentsController(IDepartmentServices departmentServices,
         ILogger<DepartmentsController> logger,
-        IWebHostEnvironment env) : Controller
+        IWebHostEnvironment env, IMapper mapper) : Controller
     {
         [HttpGet]
         public IActionResult Index()
@@ -61,7 +62,7 @@ namespace Demo.PL.Controllers
             var department = departmentServices.GetById(id.Value);
             if (department == null)
                 return NotFound();
-            return View(department.ToUpdateRequest());
+            return View(mapper.Map<DepartmentUpdateRequest>(department));
         }
         [HttpPost]
         public IActionResult Edit([FromRoute] int? id, DepartmentUpdateRequest request)

@@ -1,11 +1,10 @@
-﻿
-
-namespace Demo.BLL.Services;
-public class DepartmentServices(IDepartmentRepository departmentRepository) : IDepartmentServices
+﻿namespace Demo.BLL.Services;
+public class DepartmentServices(IDepartmentRepository departmentRepository, IMapper mapper) : IDepartmentServices
 {
     public int Add(DepartmentRequest request)
     {
-        return departmentRepository.Add(request.ToEntity());
+        var department = mapper.Map<Department>(request);
+        return departmentRepository.Add(department);
     }
 
     public bool Delete(int id)
@@ -19,16 +18,18 @@ public class DepartmentServices(IDepartmentRepository departmentRepository) : ID
 
     public IEnumerable<DepartmentResponse> GetAll()
     {
-        return departmentRepository.GetAll().Select(x => x.ToResponse());
+        var departments = departmentRepository.GetAll();
+        return mapper.Map<IEnumerable<DepartmentResponse>>(departments);
     }
 
     public DepartmentDetailsResponse? GetById(int id)
     {
-        return departmentRepository.GetById(id)?.ToDetailsResponse();
+        var department = departmentRepository.GetById(id);
+        return mapper.Map<DepartmentDetailsResponse>(department);
     }
 
     public int Update(DepartmentUpdateRequest request)
     {
-        return departmentRepository.Update(request.ToEntity());
+        return departmentRepository.Update(mapper.Map<Department>(request));
     }
 }
