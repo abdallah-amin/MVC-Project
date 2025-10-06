@@ -18,8 +18,19 @@ public class EmployeeServices(IEmployeeRepository employeeRepository, IMapper ma
 
     public IEnumerable<EmployeeResponse> GetAll()
     {
-        var employees = employeeRepository.GetAll();
-        return mapper.Map<IEnumerable<EmployeeResponse>>(employees);
+        var employees = employeeRepository.GetAll(
+            e => new EmployeeResponse
+            {
+                Id = e.Id,
+                Age = e.Age,
+                Email = e.Email,
+                EmployeeType = e.EmployeeType.ToString(),
+                Gender = e.Gender.ToString(),
+                IsActive = e.IsActive,
+                Name = e.Name,
+                Salary = e.Salary,
+            });
+        return employees;
     }
 
     public EmployeeDetailsResponse? GetById(int id)
