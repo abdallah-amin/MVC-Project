@@ -1,7 +1,7 @@
-﻿using AutoMapper;
-using Demo.BLL.DataTransferObjects.Departments;
-using Demo.BLL.Services;
-using Microsoft.AspNetCore.Mvc;
+﻿global using AutoMapper;
+global using Demo.BLL.DataTransferObjects.Departments;
+global using Demo.BLL.Services;
+global using Microsoft.AspNetCore.Mvc;
 
 namespace Demo.PL.Controllers
 {
