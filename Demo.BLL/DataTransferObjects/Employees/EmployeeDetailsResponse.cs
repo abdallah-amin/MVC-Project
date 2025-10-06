@@ -9,7 +9,7 @@ public class EmployeeDetailsResponse
     public bool IsActive { get; set; }
     public string? Email { get; set; }
     public string? PhoneNumber { get; set; }
-    public DateOnly HiringDate { get; set; }
+    public DateTime HiringDate { get; set; }
     public string Gender { get; set; }
     public string EmployeeType { get; set; }
     public int CreatedBy { get; set; }

@@ -24,7 +24,7 @@ public class EmployeeUpdateRequest
     [Phone]
     public string? PhoneNumber { get; set; }
     [Display(Name = "Hiring Date")]
-    public DateOnly HiringDate { get; set; }
+    public DateTime HiringDate { get; set; }
     public Gender Gender { get; set; }
     public EmployeeType EmployeeType { get; set; }
 
