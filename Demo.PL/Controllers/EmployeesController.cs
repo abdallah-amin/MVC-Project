@@ -1,9 +1,11 @@
 ﻿global using Demo.BLL.DataTransferObjects.Employees;
+global using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Demo.PL.Controllers;
 public class EmployeesController(IEmployeeServices employeeService,
         ILogger<EmployeesController> logger,
-        IWebHostEnvironment env, IMapper mapper) : Controller
+        IWebHostEnvironment env, IMapper mapper,
+        IDepartmentServices departmentServices) : Controller
 {
     [HttpGet]
     public IActionResult Index()
@@ -15,6 +17,9 @@ public class EmployeesController(IEmployeeServices employeeService,
     [HttpGet]
     public IActionResult Create()
     {
+        var departments = departmentServices.GetAll();
+        var selectList = new SelectList(departments, "Id", "Name");
+        ViewBag.Departments = selectList;
         return View();
     }
     [HttpPost]
@@ -60,6 +65,9 @@ public class EmployeesController(IEmployeeServices employeeService,
 
         if (!flowControl)
             return value;
+        var departments = departmentServices.GetAll();
+        var selectList = new SelectList(departments, "Id", "Name", employee.DepartmentId);
+        ViewBag.Departments = selectList;
         return View(mapper.Map<EmployeeUpdateRequest>(employee));
     }
     [HttpPost]
