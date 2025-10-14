@@ -29,6 +29,7 @@ public class EmployeeServices(IEmployeeRepository employeeRepository, IMapper ma
                 IsActive = e.IsActive,
                 Name = e.Name,
                 Salary = e.Salary,
+                Department = e.Department.Name
             });
         return employees;
     }

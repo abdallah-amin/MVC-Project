@@ -12,4 +12,10 @@ public class EmployeeRepository(CompanyDbContext dbContext) : BaseRepository<Emp
         return _dbSet.Where(e => !e.IsDeleted).Select(resultSelector).ToList();
     }
 
+    public override Employee? GetById(int id)
+    {
+        return _dbSet.Include(e => e.Department)
+        .FirstOrDefault(e => e.Id == id);
+
+    }
 }
