@@ -8,11 +8,12 @@ public class EmployeesController(IEmployeeServices employeeService,
         IDepartmentServices departmentServices) : Controller
 {
     [HttpGet]
-    public IActionResult Index()
+    public IActionResult Index(string? searchValue)
     {
-        var Employees = employeeService.GetAll();
-        ViewData["Hello"] = "Hello From Employee Index";
-        return View(Employees);
+        if (string.IsNullOrWhiteSpace(searchValue))
+            return View(employeeService.GetAll());
+        return View(employeeService.GetAll(searchValue));
+
     }
     [HttpGet]
     public IActionResult Create()

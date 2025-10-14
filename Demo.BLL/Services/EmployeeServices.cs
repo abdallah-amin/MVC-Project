@@ -33,6 +33,24 @@ public class EmployeeServices(IEmployeeRepository employeeRepository, IMapper ma
             });
         return employees;
     }
+    public IEnumerable<EmployeeResponse> GetAll(string? searchValue)
+    {
+        var employees = employeeRepository.GetAll(
+            e => new EmployeeResponse
+            {
+                Id = e.Id,
+                Age = e.Age,
+                Email = e.Email,
+                EmployeeType = e.EmployeeType.ToString(),
+                Gender = e.Gender.ToString(),
+                IsActive = e.IsActive,
+                Name = e.Name,
+                Salary = e.Salary,
+                Department = e.Department.Name
+            },
+            e => e.Name.Contains(searchValue));
+        return employees;
+    }
 
     public EmployeeDetailsResponse? GetById(int id)
     {

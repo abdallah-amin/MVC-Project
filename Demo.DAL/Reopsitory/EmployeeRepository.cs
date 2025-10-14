@@ -3,13 +3,13 @@
 namespace Demo.DAL.Repository;
 public class EmployeeRepository(CompanyDbContext dbContext) : BaseRepository<Employee, int>(dbContext), IEmployeeRepository
 {
-    public IEnumerable<Employee> GetAll(string name)
+    public IEnumerable<TResult> GetAll<TResult>(Expression<Func<Employee, TResult>> resultSelector,
+        Expression<Func<Employee, bool>>? predicate = null)
     {
-        return _dbSet.Where(x => x.Name == name).ToList();
-    }
-    public IEnumerable<TResult> GetAll<TResult>(Expression<Func<Employee, TResult>> resultSelector)
-    {
-        return _dbSet.Where(e => !e.IsDeleted).Select(resultSelector).ToList();
+        if (predicate is null)
+            return _dbSet.Where(e => !e.IsDeleted).Select(resultSelector).ToList();
+
+        return _dbSet.Where(e => !e.IsDeleted).Where(predicate).Select(resultSelector).ToList();
     }
 
     public override Employee? GetById(int id)

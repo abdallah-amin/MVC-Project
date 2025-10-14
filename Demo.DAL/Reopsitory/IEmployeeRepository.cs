@@ -3,7 +3,7 @@
 namespace Demo.DAL.Repository;
 public interface IEmployeeRepository : IRepository<Employee, int>
 {
-    IEnumerable<Employee> GetAll(string name);
-    IEnumerable<TResult> GetAll<TResult>(Expression<Func<Employee, TResult>> resultSelector);
+    IEnumerable<TResult> GetAll<TResult>(Expression<Func<Employee, TResult>> resultSelector,
+        Expression<Func<Employee, bool>>? predicate = null);
 
 }
