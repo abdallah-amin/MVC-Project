@@ -1,4 +1,5 @@
 using Demo.DAL.Context;
+using Demo.DAL.Reopsitory;
 using Demo.DAL.Repository;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,6 +17,8 @@ namespace Demo.PL
             builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
             builder.Services.AddScoped<IEmployeeServices, EmployeeServices>();
             builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             builder.Services.AddDbContext<CompanyDbContext>(options =>
             {

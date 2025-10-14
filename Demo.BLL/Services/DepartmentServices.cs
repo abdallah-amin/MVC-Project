@@ -1,35 +1,38 @@
 ﻿namespace Demo.BLL.Services;
-public class DepartmentServices(IDepartmentRepository departmentRepository, IMapper mapper) : IDepartmentServices
+public class DepartmentServices(IUnitOfWork unitOfWork, IMapper mapper) : IDepartmentServices
 {
     public int Add(DepartmentRequest request)
     {
         var department = mapper.Map<Department>(request);
-        return departmentRepository.Add(department);
+        unitOfWork.Departments.Add(department);
+        return unitOfWork.SaveChanges();
     }
 
     public bool Delete(int id)
     {
-        var department = departmentRepository.GetById(id);
+        var department = unitOfWork.Departments.GetById(id);
         if (department is null)
             return false;
-        var result = departmentRepository.Delete(department);
-        return result > 0;
+        unitOfWork.Departments.Delete(department);
+        return unitOfWork.SaveChanges() > 0;
     }
 
     public IEnumerable<DepartmentResponse> GetAll()
     {
-        var departments = departmentRepository.GetAll();
+        var departments = unitOfWork.Departments.GetAll();
         return mapper.Map<IEnumerable<DepartmentResponse>>(departments);
     }
 
     public DepartmentDetailsResponse? GetById(int id)
     {
-        var department = departmentRepository.GetById(id);
+        var department = unitOfWork.Departments.GetById(id);
         return mapper.Map<DepartmentDetailsResponse>(department);
     }
 
     public int Update(DepartmentUpdateRequest request)
     {
-        return departmentRepository.Update(mapper.Map<Department>(request));
+        
+        unitOfWork.Departments.Update(mapper.Map<Department>(request));
+        return unitOfWork.SaveChanges();
     }
 }

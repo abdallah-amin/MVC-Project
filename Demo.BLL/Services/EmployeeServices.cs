@@ -1,24 +1,25 @@
 ﻿namespace Demo.BLL.Services;
-public class EmployeeServices(IEmployeeRepository employeeRepository, IMapper mapper) : IEmployeeServices
+public class EmployeeServices(IUnitOfWork unitOfWork, IMapper mapper) : IEmployeeServices
 {
     public int Add(EmployeeRequest request)
     {
         var employee = mapper.Map<Employee>(request);
-        return employeeRepository.Add(employee);
+        unitOfWork.Employees.Add(employee);
+        return unitOfWork.SaveChanges();
     }
 
     public bool Delete(int id)
     {
-        var employee = employeeRepository.GetById(id);
+        var employee = unitOfWork.Employees.GetById(id);
         if (employee is null)
             return false;
-        var result = employeeRepository.Delete(employee);
-        return result > 0;
+        unitOfWork.Employees.Delete(employee);
+        return unitOfWork.SaveChanges() > 0;
     }
 
     public IEnumerable<EmployeeResponse> GetAll()
     {
-        var employees = employeeRepository.GetAll(
+        var employees = unitOfWork.Employees.GetAll(
             e => new EmployeeResponse
             {
                 Id = e.Id,
@@ -35,7 +36,7 @@ public class EmployeeServices(IEmployeeRepository employeeRepository, IMapper ma
     }
     public IEnumerable<EmployeeResponse> GetAll(string? searchValue)
     {
-        var employees = employeeRepository.GetAll(
+        var employees = unitOfWork.Employees.GetAll(
             e => new EmployeeResponse
             {
                 Id = e.Id,
@@ -54,12 +55,13 @@ public class EmployeeServices(IEmployeeRepository employeeRepository, IMapper ma
 
     public EmployeeDetailsResponse? GetById(int id)
     {
-        var employee = employeeRepository.GetById(id);
+        var employee = unitOfWork.Employees.GetById(id);
         return mapper.Map<EmployeeDetailsResponse>(employee);
     }
 
     public int Update(EmployeeUpdateRequest request)
     {
-        return employeeRepository.Update(mapper.Map<Employee>(request));
+        unitOfWork.Employees.Update(mapper.Map<Employee>(request));
+        return unitOfWork.SaveChanges();
     }
 }
