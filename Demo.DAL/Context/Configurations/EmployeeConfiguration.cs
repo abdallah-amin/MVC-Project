@@ -27,5 +27,9 @@ internal class EmployeeConfiguration : IEntityTypeConfiguration<Employee>
             .HasConversion(x => x.ToString(),
             s => Enum.Parse<Gender>(s));
 
+        builder.HasOne(e => e.Department)
+            .WithMany(d => d.Employees)
+            .HasForeignKey(e => e.DepartmentId);
+
     }
 }
