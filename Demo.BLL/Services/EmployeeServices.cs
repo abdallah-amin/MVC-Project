@@ -1,25 +1,25 @@
-﻿namespace Demo.BLL.Services;
+﻿using System.Threading.Tasks;
+
+namespace Demo.BLL.Services;
 public class EmployeeServices(IUnitOfWork unitOfWork, IMapper mapper) : IEmployeeServices
 {
-    public int Add(EmployeeRequest request)
+    public async Task<int> AddAsync(EmployeeRequest request)
     {
         var employee = mapper.Map<Employee>(request);
         unitOfWork.Employees.Add(employee);
-        return unitOfWork.SaveChanges();
+        return await unitOfWork.SaveChangesAsync();
     }
-
-    public bool Delete(int id)
+    public async Task<bool> DeleteAsync(int id)
     {
-        var employee = unitOfWork.Employees.GetById(id);
+        var employee = await unitOfWork.Employees.GetByIdAsync(id);
         if (employee is null)
             return false;
         unitOfWork.Employees.Delete(employee);
-        return unitOfWork.SaveChanges() > 0;
+        return await unitOfWork.SaveChangesAsync() > 0;
     }
-
-    public IEnumerable<EmployeeResponse> GetAll()
+    public async Task<IEnumerable<EmployeeResponse>> GetAllAsync()
     {
-        var employees = unitOfWork.Employees.GetAll(
+        var employees = await unitOfWork.Employees.GetAllAsync(
             e => new EmployeeResponse
             {
                 Id = e.Id,
@@ -34,9 +34,9 @@ public class EmployeeServices(IUnitOfWork unitOfWork, IMapper mapper) : IEmploye
             });
         return employees;
     }
-    public IEnumerable<EmployeeResponse> GetAll(string? searchValue)
+    public async Task<IEnumerable<EmployeeResponse>> GetAllAsync(string? searchValue)
     {
-        var employees = unitOfWork.Employees.GetAll(
+        var employees = await unitOfWork.Employees.GetAllAsync(
             e => new EmployeeResponse
             {
                 Id = e.Id,
@@ -52,16 +52,14 @@ public class EmployeeServices(IUnitOfWork unitOfWork, IMapper mapper) : IEmploye
             e => e.Name.Contains(searchValue));
         return employees;
     }
-
-    public EmployeeDetailsResponse? GetById(int id)
+    public async Task<EmployeeDetailsResponse?> GetByIdAsync(int id)
     {
-        var employee = unitOfWork.Employees.GetById(id);
+        var employee = await unitOfWork.Employees.GetByIdAsync(id);
         return mapper.Map<EmployeeDetailsResponse>(employee);
     }
-
-    public int Update(EmployeeUpdateRequest request)
+    public async Task<int> UpdateAsync(EmployeeUpdateRequest request)
     {
         unitOfWork.Employees.Update(mapper.Map<Employee>(request));
-        return unitOfWork.SaveChanges();
+        return await unitOfWork.SaveChangesAsync();
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Demo.DAL.Repository;
+using System.Threading.Tasks;
 
 namespace Demo.DAL.Reopsitory;
 public class UnitOfWork(CompanyDbContext dbContext,
@@ -10,5 +11,5 @@ public class UnitOfWork(CompanyDbContext dbContext,
 
     public IDepartmentRepository Departments => department;
 
-    public int SaveChanges() => dbContext.SaveChanges();
+    public async Task<int> SaveChangesAsync() => await dbContext.SaveChangesAsync();
 }

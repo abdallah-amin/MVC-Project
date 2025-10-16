@@ -1,5 +1,6 @@
 ﻿global using Demo.BLL.DataTransferObjects.Employees;
 global using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Threading.Tasks;
 
 namespace Demo.PL.Controllers;
 public class EmployeesController(IEmployeeServices employeeService,
@@ -8,30 +9,30 @@ public class EmployeesController(IEmployeeServices employeeService,
         IDepartmentServices departmentServices) : Controller
 {
     [HttpGet]
-    public IActionResult Index(string? searchValue)
+    public async Task<IActionResult> Index(string? searchValue)
     {
         if (string.IsNullOrWhiteSpace(searchValue))
-            return View(employeeService.GetAll());
-        return View(employeeService.GetAll(searchValue));
+            return View(await employeeService.GetAllAsync());
+        return View(await employeeService.GetAllAsync(searchValue));
 
     }
     [HttpGet]
-    public IActionResult Create()
+    public async Task<IActionResult> Create()
     {
-        var departments = departmentServices.GetAll();
+        var departments = await departmentServices.GetAllAsync();
         var selectList = new SelectList(departments, "Id", "Name");
         ViewBag.Departments = selectList;
         return View();
     }
     [HttpPost]
-    public IActionResult Create(EmployeeRequest request)
+    public async Task<IActionResult> Create(EmployeeRequest request)
     {
         if (!ModelState.IsValid)
             return View(request);
 
         try
         {
-            var result = employeeService.Add(request);
+            var result = await employeeService.AddAsync(request);
             if (result > 0)
             {
                 TempData["Message"] = $"Employee {request.Name} Created";
@@ -49,30 +50,28 @@ public class EmployeesController(IEmployeeServices employeeService,
         }
         return View(request);
     }
-    public IActionResult Details(int? id)
+    public async Task<IActionResult> Details(int? id)
     {
-        EmployeeDetailsResponse? employee;
-        (bool flowControl, IActionResult value) = ValidationEmployeeIdAndFetch(id, out employee);
+        var result = await ValidationEmployeeIdAndFetch(id);
 
-        if (!flowControl)
-            return value;
-        return View(employee);
+        if (!result.flowControl)
+            return result.value;
+        return View(result.employee);
     }
     [HttpGet]
-    public IActionResult Edit(int? id)
+    public async Task<IActionResult> Edit(int? id)
     {
-        EmployeeDetailsResponse? employee;
-        (bool flowControl, IActionResult value) = ValidationEmployeeIdAndFetch(id, out employee);
+        var result = await ValidationEmployeeIdAndFetch(id);
 
-        if (!flowControl)
-            return value;
-        var departments = departmentServices.GetAll();
-        var selectList = new SelectList(departments, "Id", "Name", employee.DepartmentId);
+        if (!result.flowControl)
+            return result.value;
+        var departments = await departmentServices.GetAllAsync();
+        var selectList = new SelectList(departments, "Id", "Name", result.employee.DepartmentId);
         ViewBag.Departments = selectList;
-        return View(mapper.Map<EmployeeUpdateRequest>(employee));
+        return View(mapper.Map<EmployeeUpdateRequest>(result.employee));
     }
     [HttpPost]
-    public IActionResult Edit([FromRoute] int? id, EmployeeUpdateRequest request)
+    public async Task<IActionResult> Edit([FromRoute] int? id, EmployeeUpdateRequest request)
     {
         if (!id.HasValue)
             return BadRequest();
@@ -83,7 +82,7 @@ public class EmployeesController(IEmployeeServices employeeService,
 
         try
         {
-            var result = employeeService.Update(request);
+            var result = await employeeService.UpdateAsync(request);
             if (result > 0)
                 return RedirectToAction(nameof(Index));
             else
@@ -100,26 +99,25 @@ public class EmployeesController(IEmployeeServices employeeService,
 
     }
     [HttpGet]
-    public IActionResult Delete(int? id)
+    public async Task<IActionResult> Delete(int? id)
     {
-        EmployeeDetailsResponse? employee;
-        (bool flowControl, IActionResult value) = ValidationEmployeeIdAndFetch(id, out employee);
+        var result = await ValidationEmployeeIdAndFetch(id);
 
-        if (!flowControl)
-            return value;
-        return View(employee);
+        if (!result.flowControl)
+            return result.value;
+        return View(result.employee);
 
     }
     [HttpPost, ActionName("Delete")]
-    public IActionResult ConfirmDelete(int? id)
+    public async Task<IActionResult> ConfirmDelete(int? id)
     {
         if (!id.HasValue)
             return BadRequest();
         EmployeeDetailsResponse? Employee = null;
         try
         {
-            Employee = employeeService.GetById(id.Value);
-            var isDeleted = employeeService.Delete(id.Value);
+            Employee = await employeeService.GetByIdAsync(id.Value);
+            var isDeleted = await employeeService.DeleteAsync(id.Value);
             if (isDeleted)
                 return RedirectToAction(nameof(Index));
             else
@@ -135,18 +133,17 @@ public class EmployeesController(IEmployeeServices employeeService,
         return View(Employee);
     }
 
-    private (bool flowControl, IActionResult value) ValidationEmployeeIdAndFetch(int? id,
-    out EmployeeDetailsResponse? employee)
+    private async Task<(bool flowControl, IActionResult value, EmployeeDetailsResponse? employee)>
+        ValidationEmployeeIdAndFetch(int? id)
     {
         if (!id.HasValue)
         {
-            employee = default;
-            return (flowControl: false, value: BadRequest());
+            return (flowControl: false, value: BadRequest(), null);
         }
-        employee = employeeService.GetById(id.Value);
+        var employee = await employeeService.GetByIdAsync(id.Value);
         if (employee == null)
-            return (flowControl: false, value: NotFound());
-        return (flowControl: true, value: null);
+            return (flowControl: false, value: NotFound(), employee);
+        return (flowControl: true, value: null, employee);
     }
 
 }

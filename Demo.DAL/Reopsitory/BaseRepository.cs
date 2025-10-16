@@ -12,18 +12,18 @@ public class BaseRepository<TEntity, TKey>(CompanyDbContext dbContext) : IReposi
         _dbSet.Remove(TEntity);
     }
 
-    public virtual IEnumerable<TEntity> GetAll(bool trackChanges = false)
+    public virtual async Task<IEnumerable<TEntity>> GetAllAsync(bool trackChanges = false)
     {
         return trackChanges ?
-        _dbSet
-        .Where(d => d.IsDeleted == false).ToList() :
-        _dbSet.AsNoTracking()
-        .Where(d => d.IsDeleted == false).ToList();
+        await _dbSet
+        .Where(d => d.IsDeleted == false).ToListAsync() :
+        await _dbSet.AsNoTracking()
+        .Where(d => d.IsDeleted == false).ToListAsync();
     }
 
-    public virtual TEntity? GetById(int id)
+    public virtual async Task<TEntity?> GetByIdAsync(int id)
     {
-        return _dbSet.Find(id);
+        return await _dbSet.FindAsync(id);
     }
 
     public virtual void Update(TEntity TEntity)

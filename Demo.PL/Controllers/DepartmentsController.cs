@@ -2,6 +2,7 @@
 global using Demo.BLL.DataTransferObjects.Departments;
 global using Demo.BLL.Services;
 global using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace Demo.PL.Controllers
 {
@@ -10,9 +11,9 @@ namespace Demo.PL.Controllers
         IWebHostEnvironment env, IMapper mapper) : Controller
     {
         [HttpGet]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var department = departmentServices.GetAll();
+            var department = await departmentServices.GetAllAsync();
             return View(department);
         }
         [HttpGet]
@@ -21,7 +22,7 @@ namespace Demo.PL.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult Create(DepartmentRequest request)
+        public async Task<IActionResult> Create(DepartmentRequest request)
         {
             // validation => Server side validation
             if (!ModelState.IsValid)
@@ -29,7 +30,7 @@ namespace Demo.PL.Controllers
 
             try
             {
-                var result = departmentServices.Add(request);
+                var result = await departmentServices.AddAsync(request);
                 if (result > 0)
                     return RedirectToAction(nameof(Index));
                 else
@@ -45,27 +46,27 @@ namespace Demo.PL.Controllers
             return View(request);
         }
         [HttpGet]
-        public IActionResult Details(int? id)
+        public async Task<IActionResult> Details(int? id)
         {
             if (!id.HasValue)
                 return BadRequest();
-            var department = departmentServices.GetById(id.Value);
+            var department = await departmentServices.GetByIdAsync(id.Value);
             if (department == null)
                 return NotFound();
             return View(department);
         }
         [HttpGet]
-        public IActionResult Edit(int? id)
+        public async Task<IActionResult> Edit(int? id)
         {
             if (!id.HasValue)
                 return BadRequest();
-            var department = departmentServices.GetById(id.Value);
+            var department = await departmentServices.GetByIdAsync(id.Value);
             if (department == null)
                 return NotFound();
             return View(mapper.Map<DepartmentUpdateRequest>(department));
         }
         [HttpPost]
-        public IActionResult Edit([FromRoute] int? id, DepartmentUpdateRequest request)
+        public async Task<IActionResult> Edit([FromRoute] int? id, DepartmentUpdateRequest request)
         {
             if (!id.HasValue)
                 return BadRequest();
@@ -76,7 +77,7 @@ namespace Demo.PL.Controllers
 
             try
             {
-                var result = departmentServices.Update(request);
+                var result = await departmentServices.UpdateAsync(request);
                 if (result > 0)
                     return RedirectToAction(nameof(Index));
                 else
@@ -93,26 +94,26 @@ namespace Demo.PL.Controllers
 
         }
         [HttpGet]
-        public IActionResult Delete(int? id)
+        public async Task<IActionResult> Delete(int? id)
         {
             if (!id.HasValue)
                 return BadRequest();
-            var department = departmentServices.GetById(id.Value);
+            var department = await departmentServices.GetByIdAsync(id.Value);
             if (department == null)
                 return NotFound();
             return View(department);
 
         }
         [HttpPost, ActionName("Delete")]
-        public IActionResult ConfirmDelete(int? id)
+        public async Task<IActionResult> ConfirmDelete(int? id)
         {
             if (!id.HasValue)
                 return BadRequest();
             DepartmentDetailsResponse? department = null;
             try
             {
-                department = departmentServices.GetById(id.Value);
-                var isDeleted = departmentServices.Delete(id.Value);
+                department = await departmentServices.GetByIdAsync(id.Value);
+                var isDeleted = await departmentServices.DeleteAsync(id.Value);
                 if (isDeleted)
                     return RedirectToAction(nameof(Index));
                 else
