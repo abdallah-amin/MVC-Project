@@ -1,4 +1,6 @@
-﻿namespace Demo.BLL.DataTransferObjects.Employees;
+﻿using Microsoft.AspNetCore.Http;
+
+namespace Demo.BLL.DataTransferObjects.Employees;
 public class EmployeeDetailsResponse
 {
     public int Id { get; set; }
@@ -18,5 +20,7 @@ public class EmployeeDetailsResponse
     public DateTime LastModifiedOn { get; set; }
     public string? Department { get; set; }
     public int? DepartmentId { get; set; }
+    public string? ImageName { get; set; }
+    public IFormFile? Image { get; set; }
 
 }

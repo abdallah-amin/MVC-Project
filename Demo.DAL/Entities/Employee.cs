@@ -13,5 +13,6 @@ public class Employee : BaseEntity<int>
     public EmployeeType EmployeeType { get; set; }
     public int? DepartmentId { get; set; }
     public Department Department { get; set; } = null!;
+    public string? Image { get; set; } = null!;
 
 }

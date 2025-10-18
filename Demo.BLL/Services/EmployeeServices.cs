@@ -1,11 +1,15 @@
-﻿using System.Threading.Tasks;
-
-namespace Demo.BLL.Services;
-public class EmployeeServices(IUnitOfWork unitOfWork, IMapper mapper) : IEmployeeServices
+﻿namespace Demo.BLL.Services;
+public class EmployeeServices(IUnitOfWork unitOfWork, IMapper mapper,
+    IDocumentService documentService) : IEmployeeServices
 {
     public async Task<int> AddAsync(EmployeeRequest request)
     {
         var employee = mapper.Map<Employee>(request);
+        if (request.Image is not null && request.Image.Length > 0)
+        {
+            var imageName = await documentService.UploadAsync(request.Image, "Images");
+            employee.Image = imageName;
+        }
         unitOfWork.Employees.Add(employee);
         return await unitOfWork.SaveChangesAsync();
     }
@@ -15,7 +19,14 @@ public class EmployeeServices(IUnitOfWork unitOfWork, IMapper mapper) : IEmploye
         if (employee is null)
             return false;
         unitOfWork.Employees.Delete(employee);
-        return await unitOfWork.SaveChangesAsync() > 0;
+        var result = await unitOfWork.SaveChangesAsync();
+        if (result > 0)
+        {
+            if(employee.Image is not null)
+                documentService.Delete(employee.Image, "Images");
+            return true;
+        }
+        return false;
     }
     public async Task<IEnumerable<EmployeeResponse>> GetAllAsync()
     {
@@ -59,7 +70,22 @@ public class EmployeeServices(IUnitOfWork unitOfWork, IMapper mapper) : IEmploye
     }
     public async Task<int> UpdateAsync(EmployeeUpdateRequest request)
     {
-        unitOfWork.Employees.Update(mapper.Map<Employee>(request));
-        return await unitOfWork.SaveChangesAsync();
+        var emp = await unitOfWork.Employees.GetByIdAsync(request.Id);
+        var image = emp.Image;
+        emp = mapper.Map(request, emp); 
+        if (request.Image is null)
+            emp.Image = image;
+        else if(request.Image.Length > 0)
+        {
+            var imageName = await documentService.UploadAsync(request.Image, "Images");
+            emp.Image = imageName;
+        }
+        unitOfWork.Employees.Update(emp);
+        var result = await unitOfWork.SaveChangesAsync();
+        if (request.Image is not null && image is not null)
+        {
+            documentService.Delete(image, "Images");
+        }
+        return result;
     }
 }

@@ -31,5 +31,10 @@ internal class EmployeeConfiguration : IEntityTypeConfiguration<Employee>
             .WithMany(d => d.Employees)
             .HasForeignKey(e => e.DepartmentId);
 
+        builder.Property(e => e.Image)
+            .HasColumnType("VarChar")
+            .HasMaxLength(256)
+            .IsRequired(false);
+
     }
 }

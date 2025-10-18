@@ -1,4 +1,5 @@
 ﻿using Demo.DAL.Entities.Enums;
+using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 
 namespace Demo.BLL.DataTransferObjects.Employees;
@@ -27,4 +28,5 @@ public class EmployeeRequest
     public Gender Gender { get; set; }
     public EmployeeType EmployeeType { get; set; }
     public int? DepartmentId { get; set; }
+    public IFormFile? Image { get; set; }
 }
