@@ -1,11 +1,13 @@
 ﻿@model EmployeeDetailsResponse
 
-
+@if (Model.ImageName is not null)
+{
 <div class="row justify-content-center align-items-center">
     <div class="col-4">
         <img src="~/Data/Images/@Model.ImageName" class="img-fluid rounded-circle" alt="Employee's Image'" />
     </div>
 </div>
+}
 
 
 <ul class="nav nav-tabs" id="departmentTabs" role="tablist">
