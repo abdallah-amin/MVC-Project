@@ -1,8 +1,10 @@
 ﻿global using Demo.BLL.DataTransferObjects.Employees;
 global using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Authorization;
 using System.Threading.Tasks;
 
 namespace Demo.PL.Controllers;
+[Authorize]
 public class EmployeesController(IEmployeeServices employeeService,
         ILogger<EmployeesController> logger,
         IWebHostEnvironment env, IMapper mapper,

@@ -1,7 +1,10 @@
 using Demo.DAL.Context;
+using Demo.DAL.Entities;
 using Demo.DAL.Reopsitory;
 using Demo.DAL.Repository;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
 namespace Demo.PL
 {
@@ -28,6 +31,11 @@ namespace Demo.PL
             });
 
             builder.Services.AddAutoMapper(typeof(BLL.AssemplyReference).Assembly);
+            builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
+
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+                            .AddEntityFrameworkStores<CompanyDbContext>();
 
 
             var app = builder.Build();
@@ -45,6 +53,7 @@ namespace Demo.PL
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllerRoute(
